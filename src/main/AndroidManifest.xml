@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.telink.bluetooth.light">
+
+    <!-- 蓝牙权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <application
+        android:name=".TelinkLightApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <service
+            android:name=".TelinkLightService"
+            android:enabled="true" />
+
+        <activity
+            android:name=".activity.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.DeviceSettingActivity"
+            android:label="@string/activity_device_setting_label"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.DeviceScanningActivity"
+            android:label="@string/activity_device_scanning_label"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AddMeshActivity"
+            android:label="@string/activity_mesh_add_lable"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.DeviceGroupingActivity"
+            android:label="@string/activity_device_grouping"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.GroupSettingActivity"
+            android:label="@string/activity_group_setting"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AddGroupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OtaActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OtaDeviceListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.BatchOtaActivity"
+            android:screenOrientation="portrait" />
+    </application>
+
+</manifest>
