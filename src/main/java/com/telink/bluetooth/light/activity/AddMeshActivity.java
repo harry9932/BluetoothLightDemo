@@ -1,7 +1,10 @@
 package com.telink.bluetooth.light.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -9,16 +12,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.telink.bluetooth.light.R;
 import com.telink.bluetooth.light.TelinkActivity;
 import com.telink.bluetooth.light.TelinkLightApplication;
 import com.telink.bluetooth.light.TelinkLightService;
 import com.telink.bluetooth.light.model.Mesh;
 
+import java.io.File;
+
 public final class AddMeshActivity extends TelinkActivity {
 
     private ImageView backView;
     private Button btnSave;
+    private ImageView imgDel;
 
     private TelinkLightApplication mApplication;
     private OnClickListener clickListener = new OnClickListener() {
@@ -48,7 +57,28 @@ public final class AddMeshActivity extends TelinkActivity {
 
         this.btnSave = (Button) this.findViewById(R.id.btn_save);
         this.btnSave.setOnClickListener(this.clickListener);
+        imgDel = (ImageView) findViewById(R.id.img_del);
+        imgDel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+                new AlertDialog.Builder(AddMeshActivity.this).setTitle("是否删除旧数据")
+                        .setPositiveButton("删除", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                File dir = Environment.getExternalStorageDirectory();
+                                File file = new File(dir, "telink.meshs");
+                                boolean result = FileUtils.deleteFile(file);
+                                if (result){
+                                    ToastUtils.showShort("删除成功");
+                                    AppUtils.relaunchApp();
+                                }else {
+                                    ToastUtils.showShort("删除失败");
+                                }
+                            }
+                        }).create().show();
+            }
+        });
         this.updateGUI();
 
         TelinkLightService.Instance().idleMode(false);

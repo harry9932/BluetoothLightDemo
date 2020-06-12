@@ -7,24 +7,25 @@
     <string name="activity_device_scanning_label">Device Scanning</string>
     <string name="activity_device_grouping">Device Grouping</string>
     <string name="activity_group_setting">Group Setting</string>
-    <string name="activity_mesh_add_lable">Add Mesh</string>
+    <string name="activity_mesh_add_lable">Modify</string>
 
     <!-- Bottom Nav -->
-    <string name="header_devices">Lights</string>
+    <string name="header_devices">Setting</string>
     <string name="header_groups">Groups</string>
     <string name="header_account">Me</string>
 
     <!-- DeviceSchema List -->
-    <string name="device_list_header">Lights</string>
-    <string name="device_list_menu_left">Meshs</string>
-    <string name="device_list_all_on">All On</string>
+    <string name="device_list_header">智能电源控制系统</string>
+    <string name="device_list_menu_left">设置</string>
+    <string name="device_list_all_on">广播控制</string>
+    <string name="device_list_exit">退出</string>
     <string name="device_list_all_off">All Off</string>
     <string name="device_list_Scene">Ota</string>
     <string name="device_list_Scene_night">Night Scene</string>
     <string name="device_list_Scene_sleep">Sleep Scene</string>
 
     <!-- DeviceSchema Setting -->
-    <string name="device_setting_header">Light Setting</string>
+    <string name="device_setting_header">Control</string>
     <string name="device_setting_brightness">Brightness</string>
     <string name="device_setting_color">Color</string>
     <string name="device_setting_temperature">Color Temperature</string>
@@ -36,7 +37,7 @@
     <string name="device_grouping_header">Grouping</string>
 
     <!-- Scan DeviceSchema -->
-    <string name="device_scan_header">Network Scanning</string>
+    <string name="device_scan_header">扫描组网设备</string>
     <string name="device_scan_scan">Scan Device</string>
     <string name="device_scan_add">Add Device</string>
 
@@ -49,18 +50,35 @@
     <string name="group_setting_header">Group Setting</string>
 
     <!-- MeshSchema Add -->
-    <string name="mesh_add_header">Add Mesh</string>
-    <string name="mesh_add_label_mesh_setting">Mesh Setting</string>
-    <string name="mesh_add_label_factory_setting">Factory Default Setting</string>
-    <string name="mesh_add_button_save">Save</string>
-    <string name="mesh_add_default_factory_name">telink_mesh1</string>
-    <string name="mesh_add_default_factory_password">123</string>
-    <string name="mesh_add_mesh_name">Default Mesh Name</string>
-    <string name="mesh_add_mesh_password">Default Mesh Password</string>
+    <string name="mesh_add_header">设置</string>
+    <string name="mesh_add_label_mesh_setting">新用户密码</string>
+    <string name="mesh_add_label_factory_setting">原用户密码</string>
+    <string name="mesh_add_button_save">保存设置</string>
+    <!--    <string name="mesh_add_default_factory_name">telink_mesh1</string>-->
+    <!--    <string name="mesh_add_default_factory_password">123</string>-->
+    <!--    <string name="mesh_add_mesh_name">Default Mesh Name</string>-->
+    <!--    <string name="mesh_add_mesh_password">Default Mesh Password</string>-->
+    <string name="mesh_add_default_factory_name">AT-mesh</string>
+    <string name="mesh_add_default_factory_password">123456</string>
+    <string name="mesh_add_mesh_name"> </string>
+    <string name="mesh_add_mesh_password"> </string>
+
     <string name="mesh_add_factory_mesh_name">Factory Mesh Name</string>
     <string name="mesh_add_factory_mesh_password">Factory Mesh Password</string>
 
     <string name="title_activity_group_setting">GroupSettingActivity</string>
     <string name="title_activity_test">TestActivity</string>
+
+
+    <string name="action_up">上升</string>
+    <string name="action_stop">停止</string>
+    <string name="action_down">下降</string>
+    <string name="action_light_open">照明开</string>
+    <string name="action_light_close">照明关</string>
+    <string name="action_fan_open">风扇开</string>
+    <string name="action_fan_close">风扇关</string>
+    <string name="action_socket_open">插排开</string>
+    <string name="action_socket_close">插排关</string>
+
 
 </resources>

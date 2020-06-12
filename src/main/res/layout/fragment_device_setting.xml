@@ -1,155 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scroll_view"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:scrollbars="none">
+    android:background="@android:color/white"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <!-- Brightness -->
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/border_line" />
-
-        <!-- Color -->
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:orientation="vertical">
-
-            <RelativeLayout
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_list"
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
+                android:layout_height="330dp" />
 
-                <Button
-                    android:id="@+id/btn_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:text="Test"
-                    android:visibility="gone" />
-
-                <Button
-                    android:id="@+id/button_up"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:text="上升" />
-
-                <Button
-                    android:id="@+id/button_stop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/button_up"
-                    android:layout_centerHorizontal="true"
-                    android:text="停止" />
-
-                <Button
-                    android:id="@+id/button_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/button_stop"
-                    android:layout_alignParentEnd="true"
-                    android:text="下降" />
-
-                <Button
-                    android:id="@+id/button_lighting_open"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/button_up"
-                    android:layout_marginTop="18dp"
-                    android:text="照明开" />
-
-                <Button
-                    android:id="@+id/button_fan_open"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/button_lighting_open"
-                    android:layout_alignBottom="@+id/button_lighting_open"
-                    android:layout_centerHorizontal="true"
-                    android:text="风扇开" />
-
-                <Button
-                    android:id="@+id/button_socket_open"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignTop="@+id/button_fan_open"
-                    android:text="插排开" />
-
-                <Button
-                    android:id="@+id/button_socket_close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignTop="@+id/button_fan_close"
-                    android:text="插排关" />
-
-                <Button
-                    android:id="@+id/button_lighting_close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/button_lighting_open"
-                    android:layout_marginTop="18dp"
-                    android:layout_toEndOf="@+id/btn_switch"
-                    android:text="照明关" />
-
-                <Button
-                    android:id="@+id/button_fan_close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignEnd="@+id/button_fan_open"
-                    android:layout_alignTop="@+id/button_lighting_close"
-                    android:text="风扇关" />
-
-
-
-            </RelativeLayout>
-
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_list_2"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/border_line" />
-
-        <!-- Temperature -->
-
-        <!-- Music -->
-
-        <!-- Appointment1 -->
-
-        <!-- Appointment2 -->
-
-        <!-- OTA -->
-
-        <!-- Remove DeviceSchema -->
-
-    </LinearLayout>
-
-</ScrollView>
+    </android.support.v4.widget.NestedScrollView>
+</FrameLayout>

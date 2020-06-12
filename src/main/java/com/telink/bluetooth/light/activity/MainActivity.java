@@ -22,6 +22,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Toast;
 
 
+import com.blankj.utilcode.util.LogUtils;
 import com.telink.bluetooth.LeBluetooth;
 import com.telink.bluetooth.TelinkLog;
 import com.telink.bluetooth.event.DeviceEvent;
@@ -376,7 +377,7 @@ public final class MainActivity extends TelinkFragmentActivity implements EventL
 
             if (light == null) {
                 light = new Light();
-                this.deviceFragment.addDevice(light);
+
             }
             light.macAddress = macAddress;
             light.meshAddress = meshAddress;
@@ -395,6 +396,17 @@ public final class MainActivity extends TelinkFragmentActivity implements EventL
             }
 
             light.updateIcon();
+
+            try{
+                if (light.status!= ConnectionStatus.OFFLINE){
+                    if (deviceFragment!=null){
+                        this.deviceFragment.addDevice(light);
+                    }
+
+                }
+            }catch (Exception e){
+                LogUtils.e(e);
+            }
         }
 
         mHandler.obtainMessage(UPDATE_LIST).sendToTarget();

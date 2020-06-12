@@ -1,11 +1,15 @@
 package com.telink.bluetooth.light.fragments;
 
 import android.app.Activity;
+
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +31,21 @@ import com.telink.bluetooth.light.TelinkLightApplication;
 import com.telink.bluetooth.light.TelinkLightService;
 import com.telink.bluetooth.light.activity.MainActivity;
 import com.telink.bluetooth.light.activity.OtaActivity;
-import com.telink.bluetooth.light.model.Mesh;
+import com.telink.bluetooth.light.base.BaseRecyclerAdapter;
+import com.telink.bluetooth.light.base.MyMenuItemDecoration;
+import com.telink.bluetooth.light.base.RecyclerViewHolder;
+
 
 import com.telink.bluetooth.light.model.Light;
 import com.telink.bluetooth.light.model.Lights;
 //import com.telink.bluetooth.light.widget.ColorPicker;
+import com.telink.bluetooth.light.model.Mesh;
+import com.telink.bluetooth.light.model.SettingAction;
 import com.telink.util.Event;
 import com.telink.util.EventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class DeviceSettingFragment extends Fragment implements View.OnClickListener, EventListener<String> {
 
@@ -42,12 +54,12 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
     public int meshAddress;
     public String macAddress;
 
-    private byte modify=0;
+    private byte modify = 0;
 
     private int adr;
 
     private SeekBar temperatureBar;
-//    private ColorPicker colorPicker;
+    //    private ColorPicker colorPicker;
 //    private Button remove;
 //    private View ota;
 //    private View delete;
@@ -55,26 +67,22 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
 
     private Context mContext;
 
-    private Button btn_up;
-    private Button btn_stop;
-    private Button btn_down;
+    private RecyclerView rvList;
+    private RecyclerView rvList2;
 
-    private Button btn_lighting_open;
-    private Button btn_lighting_close;
-    private Button btn_fan_open;
-    private Button btn_fan_close;
-    private Button btn_socket_open;
-    private Button btn_socket_close;
+    private ItemAdapter mItemAdapter;
+    private ItemAdapter mItemAdapter2;
 
-    public TelinkLightApplication apparray=new TelinkLightApplication();
+    private String[] idStrings = {"1号", "2号", "3号", "4号"};
 
+
+    public TelinkLightApplication apparray = new TelinkLightApplication();
 
 
     private OnSeekBarChangeListener barChangeListener = new OnSeekBarChangeListener() {
 
         private long preTime;
         private int delayTime = 100;
-
 
 
         @Override
@@ -87,8 +95,6 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
             this.preTime = System.currentTimeMillis();
             this.onValueChange(seekBar, seekBar.getProgress(), true);
         }
-
-
 
 
         @Override
@@ -129,7 +135,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
         }
     };
 
-//    private ColorPicker.OnColorChangeListener colorChangedListener = new ColorPicker.OnColorChangeListener() {
+    //    private ColorPicker.OnColorChangeListener colorChangedListener = new ColorPicker.OnColorChangeListener() {
 //
 //        private long preTime;
 //        private int delayTime = 100;
@@ -197,13 +203,79 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        rvList = (RecyclerView) view.findViewById(R.id.rv_list);
+        rvList2 = (RecyclerView) view.findViewById(R.id.rv_list_2);
+        List<SettingAction> actionList = new ArrayList<>();
+        actionList.add(new SettingAction(getString(R.string.action_up), R.drawable.ic_action_up));
+        actionList.add(new SettingAction(getString(R.string.action_stop), R.drawable.ic_action_stop));
+        actionList.add(new SettingAction(getString(R.string.action_down), R.drawable.ic_action_down));
+        actionList.add(new SettingAction(getString(R.string.action_light_open), R.drawable.ic_light_open));
+        actionList.add(new SettingAction(getString(R.string.action_fan_open), R.drawable.ic_fan_open));
+        actionList.add(new SettingAction(getString(R.string.action_socket_open), R.drawable.ic_socket_open));
+        actionList.add(new SettingAction(getString(R.string.action_light_close), R.drawable.ic_light_close));
+        actionList.add(new SettingAction(getString(R.string.action_fan_close), R.drawable.ic_fan_close));
+        actionList.add(new SettingAction(getString(R.string.action_socket_close), R.drawable.ic_socket_close));
+
+        List<SettingAction> actionList2 = new ArrayList<>();
+        for (String id : idStrings) {
+            actionList2.add(new SettingAction(id, R.drawable.ic_light_close));
+        }
+
+        mItemAdapter = new ItemAdapter(getActivity(), actionList);
+        mItemAdapter2 = new ItemAdapter(getActivity(), actionList2);
+
+        int spanCount = 3;
+        int spanCount2 = 2;
+
+        rvList.setLayoutManager(new GridLayoutManager(getActivity(), spanCount));
+        rvList.addItemDecoration(new MyMenuItemDecoration(getActivity(), 2, getResources().getColor(R.color.golden_yuji)));
+
+        rvList2.setLayoutManager(new GridLayoutManager(getActivity(), spanCount2));
+
+        rvList.setAdapter(mItemAdapter);
+        rvList2.setAdapter(mItemAdapter2);
+        mItemAdapter2.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int pos) {
+//                mItemAdapter2.getItem(pos).getName()
+            }
+        });
+
+        mItemAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int pos) {
+                String name = mItemAdapter.getItem(pos).getName();
+                if (name.equals((getString(R.string.action_up)))) {
+                    btnUpOnclick();
+                } else if (name.equals((getString(R.string.action_stop)))) {
+                    btnStopOnclick();
+                } else if (name.equals((getString(R.string.action_down)))) {
+                    btnDownOnclick();
+                } else if (name.equals((getString(R.string.action_light_open)))) {
+                    btnLightOpenOnclick();
+                } else if (name.equals((getString(R.string.action_fan_open)))) {
+                    btnFanOpenOnclick();
+                } else if (name.equals((getString(R.string.action_socket_open)))) {
+                    btnSocketOpenOnclick();
+                } else if (name.equals((getString(R.string.action_light_close)))) {
+                    btnLightCloseOnclick();
+                } else if (name.equals((getString(R.string.action_fan_close)))) {
+                    btnFanCloseOnclick();
+                } else if (name.equals((getString(R.string.action_socket_close)))) {
+                    btnSocketCloseOnclick();
+                }
+
+
+            }
+        });
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_device_setting, null);
-
-
-
 
 
 //        this.brightnessBar = (SeekBar) view.findViewById(R.id.sb_brightness);
@@ -224,543 +296,8 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
 //        this.delete = view.findViewById(R.id.btn_delete);
 //        this.delete.setOnClickListener(this);
 
-        this.btn_up=(Button) view.findViewById(R.id.button_up);//绑定ID
-        btn_up.setOnClickListener(new View.OnClickListener() {
 
-
-                private long preTime;
-                private int delayTime = 100;
-                @Override
-                public void onClick(View v) {
-                    //点击监听
-
-                    //int addr = meshAddress;
-                    if(meshAddress != 0xff)
-                    {
-
-                        if (macAddress == null) {
-                            apparray = (TelinkLightApplication) getActivity().getApplication();
-                            apparray.doInit();
-
-                            Mesh mesharray = apparray.getMesh();
-
-                            if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
-                                for (int i = 0; i < mesharray.devices.size(); i++) {
-
-                                    if (meshAddress == mesharray.devices.get(i).meshAddress) {
-                                        macAddress = mesharray.devices.get(i).macAddress;
-                                    }
-                                }
-                            }
-                            char[] addr = macAddress.toCharArray();
-                            if (addr[13] >= '0' && addr[13] <= '9') {
-                                adr = addr[13] - '0';
-                                adr = adr << 12;
-                            } else if (addr[13] >= 'A' && addr[13] <= 'F') {
-                                adr = addr[13] - 'A' + 0x0a;
-                                adr = adr << 12;
-                            }
-                            if (addr[14] >= '0' && addr[14] <= '9') {
-                                adr = adr | ((addr[14] - '0') << 8);
-                            } else if (addr[14] >= 'A' && addr[14] <= 'F') {
-                                adr = adr | ((addr[14] - 'A' + 0x0a) << 8);
-                            }
-                            if (addr[15] >= '0' && addr[15] <= '9') {
-                                adr = adr | ((addr[15] - '0') << 4);
-                            } else if (addr[15] >= 'A' && addr[15] <= 'F') {
-                                adr = adr | ((addr[15] - 'A' + 0x0a) << 4);
-                            }
-                            if (addr[16] >= '0' && addr[16] <= '9') {
-                                adr = adr | (addr[16] - '0');
-                            } else if (addr[16] >= 'A' && addr[16] <= 'F') {
-                                adr = adr | (addr[16] - 'A' + 0x0a);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        adr = 0xff;
-                    }
-
-
-
-
-
-
-                    modify = (byte)((modify | 0x02) & 0xFE);
-
-                    byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
-//                    byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
-
-                    byte opcode = (byte) 0xD0;
-                    int address = 0xFFFF;
-
-                    TelinkLightService.Instance().sendCommand(opcode, address, params);
-
-
-                    //TelinkLightService.Instance().sendCommandNoResponse(opcode, addr, params);
-
-                }
-
-
-
-        });
-
-        this.btn_stop=(Button) view.findViewById(R.id.button_stop);
-        btn_stop.setOnClickListener(new View.OnClickListener() {
-            private long preTime;
-            private int delayTime = 100;
-            @Override
-            public void onClick(View v) {
-                //点击监听
-
-                if(meshAddress != 0xff)
-                {
-
-                    if (macAddress == null) {
-                        apparray = (TelinkLightApplication) getActivity().getApplication();
-                        apparray.doInit();
-
-                        Mesh mesharray = apparray.getMesh();
-
-                        if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
-                            for (int i = 0; i < mesharray.devices.size(); i++) {
-
-                                if (meshAddress == mesharray.devices.get(i).meshAddress) {
-                                    macAddress = mesharray.devices.get(i).macAddress;
-                                }
-                            }
-                        }
-                        char[] addr = macAddress.toCharArray();
-                        if (addr[15] >= '0' && addr[15] <= '9') {
-                            adr = addr[15] - '0';
-                            adr = adr << 4;
-                        } else if (addr[15] >= 'A' && addr[15] <= 'F') {
-                            adr = addr[15] - 'A' + 0x0a;
-                            adr = adr << 4;
-                        }
-                        if (addr[16] >= '0' && addr[16] <= '9') {
-                            adr = adr | (addr[16] - '0');
-                        } else if (addr[16] >= 'A' && addr[16] <= 'F') {
-                            adr = adr | (addr[16] - 'A' + 0x0a);
-                        }
-                    }
-                }
-                else
-                {
-                    adr = 0xff;
-                }
-//                int addr = meshAddress;
-                modify = (byte)((modify & 0xFD) & 0xFE);
-
-                byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
-
-
-                byte opcode = (byte) 0xD0;
-                int address = 0xFFFF;
-
-                TelinkLightService.Instance().sendCommand(opcode, address, params);
-
-            }
-
-
-
-        });
-
-        this.btn_down=(Button) view.findViewById(R.id.button_down);
-
-        btn_down.setOnClickListener(new View.OnClickListener() {
-            private long preTime;
-            private int delayTime = 100;
-            @Override
-            public void onClick(View v) {
-                //点击监听
-
-//                int addr = meshAddress;
-                if(meshAddress != 0xff)
-                {
-
-                    if (macAddress == null) {
-                        apparray = (TelinkLightApplication) getActivity().getApplication();
-                        apparray.doInit();
-
-                        Mesh mesharray = apparray.getMesh();
-
-                        if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
-                            for (int i = 0; i < mesharray.devices.size(); i++) {
-
-                                if (meshAddress == mesharray.devices.get(i).meshAddress) {
-                                    macAddress = mesharray.devices.get(i).macAddress;
-                                }
-                            }
-                        }
-                        char[] addr = macAddress.toCharArray();
-                        if (addr[15] >= '0' && addr[15] <= '9') {
-                            adr = addr[15] - '0';
-                            adr = adr << 4;
-                        } else if (addr[15] >= 'A' && addr[15] <= 'F') {
-                            adr = addr[15] - 'A' + 0x0a;
-                            adr = adr << 4;
-                        }
-                        if (addr[16] >= '0' && addr[16] <= '9') {
-                            adr = adr | (addr[16] - '0');
-                        } else if (addr[16] >= 'A' && addr[16] <= 'F') {
-                            adr = adr | (addr[16] - 'A' + 0x0a);
-                        }
-                    }
-                }
-                else
-                {
-                    adr = 0xff;
-                }
-                modify = (byte)((modify & 0xFD) | 0x01);
-
-                byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
-
-
-                byte opcode = (byte) 0xD0;
-                int address = 0xFFFF;
-
-                TelinkLightService.Instance().sendCommand(opcode, address, params);
-
-            }
-
-
-
-        });
-
-        this.btn_fan_open=(Button) view.findViewById(R.id.button_fan_open);//绑定ID
-        btn_fan_open.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //点击监听
-
-//                int addr = meshAddress;
-                if(meshAddress != 0xff)
-                {
-
-                    if (macAddress == null) {
-                        apparray = (TelinkLightApplication) getActivity().getApplication();
-                        apparray.doInit();
-
-                        Mesh mesharray = apparray.getMesh();
-
-                        if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
-                            for (int i = 0; i < mesharray.devices.size(); i++) {
-
-                                if (meshAddress == mesharray.devices.get(i).meshAddress) {
-                                    macAddress = mesharray.devices.get(i).macAddress;
-                                }
-                            }
-                        }
-                        char[] addr = macAddress.toCharArray();
-                        if (addr[15] >= '0' && addr[15] <= '9') {
-                            adr = addr[15] - '0';
-                            adr = adr << 4;
-                        } else if (addr[15] >= 'A' && addr[15] <= 'F') {
-                            adr = addr[15] - 'A' + 0x0a;
-                            adr = adr << 4;
-                        }
-                        if (addr[16] >= '0' && addr[16] <= '9') {
-                            adr = adr | (addr[16] - '0');
-                        } else if (addr[16] >= 'A' && addr[16] <= 'F') {
-                            adr = adr | (addr[16] - 'A' + 0x0a);
-                        }
-                    }
-                }
-                else
-                {
-                    adr = 0xff;
-                }
-
-                modify = (byte)(modify | 0x08);
-                byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
-
-
-                byte opcode = (byte) 0xD0;
-
-                int address = 0xFFFF;
-
-                TelinkLightService.Instance().sendCommand(opcode, address, params);
-            }
-        });
-
-        this.btn_fan_close=(Button) view.findViewById(R.id.button_fan_close);//绑定ID
-        btn_fan_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //点击监听
-
-//                int addr = meshAddress;
-                if(meshAddress != 0xff)
-                {
-
-                    if (macAddress == null) {
-                        apparray = (TelinkLightApplication) getActivity().getApplication();
-                        apparray.doInit();
-
-                        Mesh mesharray = apparray.getMesh();
-
-                        if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
-                            for (int i = 0; i < mesharray.devices.size(); i++) {
-
-                                if (meshAddress == mesharray.devices.get(i).meshAddress) {
-                                    macAddress = mesharray.devices.get(i).macAddress;
-                                }
-                            }
-                        }
-                        char[] addr = macAddress.toCharArray();
-                        if (addr[15] >= '0' && addr[15] <= '9') {
-                            adr = addr[15] - '0';
-                            adr = adr << 4;
-                        } else if (addr[15] >= 'A' && addr[15] <= 'F') {
-                            adr = addr[15] - 'A' + 0x0a;
-                            adr = adr << 4;
-                        }
-                        if (addr[16] >= '0' && addr[16] <= '9') {
-                            adr = adr | (addr[16] - '0');
-                        } else if (addr[16] >= 'A' && addr[16] <= 'F') {
-                            adr = adr | (addr[16] - 'A' + 0x0a);
-                        }
-                    }
-                }
-                else
-                {
-                    adr = 0xff;
-                }
-
-                modify = (byte)(modify & 0xF7);
-                byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
-
-
-                byte opcode = (byte) 0xD0;
-                int address = 0xFFFF;
-
-                TelinkLightService.Instance().sendCommand(opcode, address, params);
-            }
-        });
-
-        this.btn_socket_open=(Button) view.findViewById(R.id.button_socket_open);//绑定ID
-        btn_socket_open.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //点击监听
-
-//                int addr = meshAddress;
-                if(meshAddress != 0xff)
-                {
-
-                    if (macAddress == null) {
-                        apparray = (TelinkLightApplication) getActivity().getApplication();
-                        apparray.doInit();
-
-                        Mesh mesharray = apparray.getMesh();
-
-                        if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
-                            for (int i = 0; i < mesharray.devices.size(); i++) {
-
-                                if (meshAddress == mesharray.devices.get(i).meshAddress) {
-                                    macAddress = mesharray.devices.get(i).macAddress;
-                                }
-                            }
-                        }
-                        char[] addr = macAddress.toCharArray();
-                        if (addr[15] >= '0' && addr[15] <= '9') {
-                            adr = addr[15] - '0';
-                            adr = adr << 4;
-                        } else if (addr[15] >= 'A' && addr[15] <= 'F') {
-                            adr = addr[15] - 'A' + 0x0a;
-                            adr = adr << 4;
-                        }
-                        if (addr[16] >= '0' && addr[16] <= '9') {
-                            adr = adr | (addr[16] - '0');
-                        } else if (addr[16] >= 'A' && addr[16] <= 'F') {
-                            adr = adr | (addr[16] - 'A' + 0x0a);
-                        }
-                    }
-                }
-                else
-                {
-                    adr = 0xff;
-                }
-
-                modify = (byte)(modify | 0x10);
-                byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
-
-
-                byte opcode = (byte) 0xD0;
-                int address = 0xFFFF;
-
-                TelinkLightService.Instance().sendCommand(opcode, address, params);
-            }
-        });
-
-        this.btn_socket_close=(Button) view.findViewById(R.id.button_socket_close);//绑定ID
-        btn_socket_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //点击监听
-
-//                int addr = meshAddress;
-                if(meshAddress != 0xff)
-                {
-
-                    if (macAddress == null) {
-                        apparray = (TelinkLightApplication) getActivity().getApplication();
-                        apparray.doInit();
-
-                        Mesh mesharray = apparray.getMesh();
-
-                        if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
-                            for (int i = 0; i < mesharray.devices.size(); i++) {
-
-                                if (meshAddress == mesharray.devices.get(i).meshAddress) {
-                                    macAddress = mesharray.devices.get(i).macAddress;
-                                }
-                            }
-                        }
-                        char[] addr = macAddress.toCharArray();
-                        if (addr[15] >= '0' && addr[15] <= '9') {
-                            adr = addr[15] - '0';
-                            adr = adr << 4;
-                        } else if (addr[15] >= 'A' && addr[15] <= 'F') {
-                            adr = addr[15] - 'A' + 0x0a;
-                            adr = adr << 4;
-                        }
-                        if (addr[16] >= '0' && addr[16] <= '9') {
-                            adr = adr | (addr[16] - '0');
-                        } else if (addr[16] >= 'A' && addr[16] <= 'F') {
-                            adr = adr | (addr[16] - 'A' + 0x0a);
-                        }
-                    }
-                }
-                else
-                {
-                    adr = 0xff;
-                }
-
-                modify = (byte)(modify & 0xEF);
-                byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
-
-
-                byte opcode = (byte) 0xD0;
-                int address = 0xFFFF;
-
-                TelinkLightService.Instance().sendCommand(opcode, address, params);
-            }
-        });
-
-        this.btn_lighting_open=(Button) view.findViewById(R.id.button_lighting_open);//绑定ID
-        btn_lighting_open.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //点击监听
-
-//                int addr = meshAddress;
-                if(meshAddress != 0xff)
-                {
-
-                    if (macAddress == null) {
-                        apparray = (TelinkLightApplication) getActivity().getApplication();
-                        apparray.doInit();
-
-                        Mesh mesharray = apparray.getMesh();
-
-                        if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
-                            for (int i = 0; i < mesharray.devices.size(); i++) {
-
-                                if (meshAddress == mesharray.devices.get(i).meshAddress) {
-                                    macAddress = mesharray.devices.get(i).macAddress;
-                                }
-                            }
-                        }
-                        char[] addr = macAddress.toCharArray();
-                        if (addr[15] >= '0' && addr[15] <= '9') {
-                            adr = addr[15] - '0';
-                            adr = adr << 4;
-                        } else if (addr[15] >= 'A' && addr[15] <= 'F') {
-                            adr = addr[15] - 'A' + 0x0a;
-                            adr = adr << 4;
-                        }
-                        if (addr[16] >= '0' && addr[16] <= '9') {
-                            adr = adr | (addr[16] - '0');
-                        } else if (addr[16] >= 'A' && addr[16] <= 'F') {
-                            adr = adr | (addr[16] - 'A' + 0x0a);
-                        }
-                    }
-                }
-                else
-                {
-                    adr = 0xff;
-                }
-
-                modify = (byte)(modify | 0x04);
-                byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
-
-
-                byte opcode = (byte) 0xD0;
-                int address = 0xFFFF;
-
-                TelinkLightService.Instance().sendCommand(opcode, address, params);
-            }
-        });
-
-        this.btn_lighting_close=(Button) view.findViewById(R.id.button_lighting_close);//绑定ID
-        btn_lighting_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //点击监听
-
-//                int addr = meshAddress;
-                if(meshAddress != 0xff)
-                {
-
-                    if (macAddress == null) {
-                        apparray = (TelinkLightApplication) getActivity().getApplication();
-                        apparray.doInit();
-
-                        Mesh mesharray = apparray.getMesh();
-
-                        if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
-                            for (int i = 0; i < mesharray.devices.size(); i++) {
-
-                                if (meshAddress == mesharray.devices.get(i).meshAddress) {
-                                    macAddress = mesharray.devices.get(i).macAddress;
-                                }
-                            }
-                        }
-                        char[] addr = macAddress.toCharArray();
-                        if (addr[15] >= '0' && addr[15] <= '9') {
-                            adr = addr[15] - '0';
-                            adr = adr << 4;
-                        } else if (addr[15] >= 'A' && addr[15] <= 'F') {
-                            adr = addr[15] - 'A' + 0x0a;
-                            adr = adr << 4;
-                        }
-                        if (addr[16] >= '0' && addr[16] <= '9') {
-                            adr = adr | (addr[16] - '0');
-                        } else if (addr[16] >= 'A' && addr[16] <= 'F') {
-                            adr = adr | (addr[16] - 'A' + 0x0a);
-                        }
-                    }
-                }
-                else
-                {
-                    adr = 0xff;
-                }
-
-                modify = (byte)(modify & 0xFB);
-                byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
-
-
-                byte opcode = (byte) 0xD0;
-                int address = 0xFFFF;
-
-                TelinkLightService.Instance().sendCommand(opcode, address, params);
-            }
-        });
-
-        return view;
+        return inflater.inflate(R.layout.fragment_device_setting, null);
     }
 
     @Override
@@ -842,6 +379,472 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                     this.dialog.setMessage("delete fail");
                 }
                 break;
+        }
+    }
+
+    private void btnUpOnclick() {
+        //点击监听
+
+        //int addr = meshAddress;
+        if (meshAddress != 0xff) {
+
+            if (macAddress == null) {
+                apparray = (TelinkLightApplication) getActivity().getApplication();
+                apparray.doInit();
+
+                Mesh mesharray = apparray.getMesh();
+
+                if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
+                    for (int i = 0; i < mesharray.devices.size(); i++) {
+
+                        if (meshAddress == mesharray.devices.get(i).meshAddress) {
+                            macAddress = mesharray.devices.get(i).macAddress;
+                        }
+                    }
+                }
+
+                char[] addr = macAddress.toCharArray();
+                if (addr[15] >= '0' && addr[15] <= '9') {
+                    adr = addr[15] - '0';
+                    adr = adr << 4;
+                } else if (addr[15] >= 'A' && addr[15] <= 'F') {
+                    adr = addr[15] - 'A' + 0x0a;
+                    adr = adr << 4;
+                }
+                if (addr[16] >= '0' && addr[16] <= '9') {
+                    adr = adr | (addr[16] - '0');
+                } else if (addr[16] >= 'A' && addr[16] <= 'F') {
+                    adr = adr | (addr[16] - 'A' + 0x0a);
+                }
+            }
+        } else {
+            adr = 0xff;
+        }
+
+
+        modify = (byte) ((modify | 0x02) & 0xFE);
+
+        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+//                    byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
+
+        byte opcode = (byte) 0xD0;
+        int address = 0xFFFF;
+
+        TelinkLightService.Instance().sendCommand(opcode, address, params);
+
+
+        //TelinkLightService.Instance().sendCommandNoResponse(opcode, addr, params);
+
+    }
+
+    private void btnStopOnclick() {
+        //点击监听
+
+        if (meshAddress != 0xff) {
+
+            if (macAddress == null) {
+                apparray = (TelinkLightApplication) getActivity().getApplication();
+                apparray.doInit();
+
+                Mesh mesharray = apparray.getMesh();
+
+                if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
+                    for (int i = 0; i < mesharray.devices.size(); i++) {
+
+                        if (meshAddress == mesharray.devices.get(i).meshAddress) {
+                            macAddress = mesharray.devices.get(i).macAddress;
+                        }
+                    }
+                }
+                char[] addr = macAddress.toCharArray();
+                if (addr[15] >= '0' && addr[15] <= '9') {
+                    adr = addr[15] - '0';
+                    adr = adr << 4;
+                } else if (addr[15] >= 'A' && addr[15] <= 'F') {
+                    adr = addr[15] - 'A' + 0x0a;
+                    adr = adr << 4;
+                }
+                if (addr[16] >= '0' && addr[16] <= '9') {
+                    adr = adr | (addr[16] - '0');
+                } else if (addr[16] >= 'A' && addr[16] <= 'F') {
+                    adr = adr | (addr[16] - 'A' + 0x0a);
+                }
+            }
+        } else {
+            adr = 0xff;
+        }
+//                int addr = meshAddress;
+        modify = (byte) ((modify & 0xFD) & 0xFE);
+
+        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+
+
+        byte opcode = (byte) 0xD0;
+        int address = 0xFFFF;
+
+        TelinkLightService.Instance().sendCommand(opcode, address, params);
+    }
+
+
+    private void btnDownOnclick() {
+        //点击监听
+
+//                int addr = meshAddress;
+        if (meshAddress != 0xff) {
+
+            if (macAddress == null) {
+                apparray = (TelinkLightApplication) getActivity().getApplication();
+                apparray.doInit();
+
+                Mesh mesharray = apparray.getMesh();
+
+                if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
+                    for (int i = 0; i < mesharray.devices.size(); i++) {
+
+                        if (meshAddress == mesharray.devices.get(i).meshAddress) {
+                            macAddress = mesharray.devices.get(i).macAddress;
+                        }
+                    }
+                }
+                char[] addr = macAddress.toCharArray();
+                if (addr[15] >= '0' && addr[15] <= '9') {
+                    adr = addr[15] - '0';
+                    adr = adr << 4;
+                } else if (addr[15] >= 'A' && addr[15] <= 'F') {
+                    adr = addr[15] - 'A' + 0x0a;
+                    adr = adr << 4;
+                }
+                if (addr[16] >= '0' && addr[16] <= '9') {
+                    adr = adr | (addr[16] - '0');
+                } else if (addr[16] >= 'A' && addr[16] <= 'F') {
+                    adr = adr | (addr[16] - 'A' + 0x0a);
+                }
+            }
+        } else {
+            adr = 0xff;
+        }
+        modify = (byte) ((modify & 0xFD) | 0x01);
+
+        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+
+
+        byte opcode = (byte) 0xD0;
+        int address = 0xFFFF;
+
+        TelinkLightService.Instance().sendCommand(opcode, address, params);
+    }
+
+
+    private void btnFanOpenOnclick() {
+        //点击监听
+
+//                int addr = meshAddress;
+        if (meshAddress != 0xff) {
+
+            if (macAddress == null) {
+                apparray = (TelinkLightApplication) getActivity().getApplication();
+                apparray.doInit();
+
+                Mesh mesharray = apparray.getMesh();
+
+                if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
+                    for (int i = 0; i < mesharray.devices.size(); i++) {
+
+                        if (meshAddress == mesharray.devices.get(i).meshAddress) {
+                            macAddress = mesharray.devices.get(i).macAddress;
+                        }
+                    }
+                }
+                char[] addr = macAddress.toCharArray();
+                if (addr[15] >= '0' && addr[15] <= '9') {
+                    adr = addr[15] - '0';
+                    adr = adr << 4;
+                } else if (addr[15] >= 'A' && addr[15] <= 'F') {
+                    adr = addr[15] - 'A' + 0x0a;
+                    adr = adr << 4;
+                }
+                if (addr[16] >= '0' && addr[16] <= '9') {
+                    adr = adr | (addr[16] - '0');
+                } else if (addr[16] >= 'A' && addr[16] <= 'F') {
+                    adr = adr | (addr[16] - 'A' + 0x0a);
+                }
+            }
+        } else {
+            adr = 0xff;
+        }
+
+        modify = (byte) (modify | 0x08);
+        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+
+
+        byte opcode = (byte) 0xD0;
+
+        int address = 0xFFFF;
+
+        TelinkLightService.Instance().sendCommand(opcode, address, params);
+    }
+
+
+    private void btnFanCloseOnclick() {
+        //点击监听
+
+//                int addr = meshAddress;
+        if (meshAddress != 0xff) {
+
+            if (macAddress == null) {
+                apparray = (TelinkLightApplication) getActivity().getApplication();
+                apparray.doInit();
+
+                Mesh mesharray = apparray.getMesh();
+
+                if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
+                    for (int i = 0; i < mesharray.devices.size(); i++) {
+
+                        if (meshAddress == mesharray.devices.get(i).meshAddress) {
+                            macAddress = mesharray.devices.get(i).macAddress;
+                        }
+                    }
+                }
+                char[] addr = macAddress.toCharArray();
+                if (addr[15] >= '0' && addr[15] <= '9') {
+                    adr = addr[15] - '0';
+                    adr = adr << 4;
+                } else if (addr[15] >= 'A' && addr[15] <= 'F') {
+                    adr = addr[15] - 'A' + 0x0a;
+                    adr = adr << 4;
+                }
+                if (addr[16] >= '0' && addr[16] <= '9') {
+                    adr = adr | (addr[16] - '0');
+                } else if (addr[16] >= 'A' && addr[16] <= 'F') {
+                    adr = adr | (addr[16] - 'A' + 0x0a);
+                }
+            }
+        } else {
+            adr = 0xff;
+        }
+
+        modify = (byte) (modify & 0xF7);
+        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+
+
+        byte opcode = (byte) 0xD0;
+        int address = 0xFFFF;
+
+        TelinkLightService.Instance().sendCommand(opcode, address, params);
+    }
+
+    private void btnSocketOpenOnclick() {
+        //点击监听
+
+//                int addr = meshAddress;
+        if (meshAddress != 0xff) {
+
+            if (macAddress == null) {
+                apparray = (TelinkLightApplication) getActivity().getApplication();
+                apparray.doInit();
+
+                Mesh mesharray = apparray.getMesh();
+
+                if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
+                    for (int i = 0; i < mesharray.devices.size(); i++) {
+
+                        if (meshAddress == mesharray.devices.get(i).meshAddress) {
+                            macAddress = mesharray.devices.get(i).macAddress;
+                        }
+                    }
+                }
+                char[] addr = macAddress.toCharArray();
+                if (addr[15] >= '0' && addr[15] <= '9') {
+                    adr = addr[15] - '0';
+                    adr = adr << 4;
+                } else if (addr[15] >= 'A' && addr[15] <= 'F') {
+                    adr = addr[15] - 'A' + 0x0a;
+                    adr = adr << 4;
+                }
+                if (addr[16] >= '0' && addr[16] <= '9') {
+                    adr = adr | (addr[16] - '0');
+                } else if (addr[16] >= 'A' && addr[16] <= 'F') {
+                    adr = adr | (addr[16] - 'A' + 0x0a);
+                }
+            }
+        } else {
+            adr = 0xff;
+        }
+
+        modify = (byte) (modify | 0x10);
+        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+
+
+        byte opcode = (byte) 0xD0;
+        int address = 0xFFFF;
+
+        TelinkLightService.Instance().sendCommand(opcode, address, params);
+    }
+
+    private void btnSocketCloseOnclick() {
+        //点击监听
+
+//                int addr = meshAddress;
+        if (meshAddress != 0xff) {
+
+            if (macAddress == null) {
+                apparray = (TelinkLightApplication) getActivity().getApplication();
+                apparray.doInit();
+
+                Mesh mesharray = apparray.getMesh();
+
+                if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
+                    for (int i = 0; i < mesharray.devices.size(); i++) {
+
+                        if (meshAddress == mesharray.devices.get(i).meshAddress) {
+                            macAddress = mesharray.devices.get(i).macAddress;
+                        }
+                    }
+                }
+                char[] addr = macAddress.toCharArray();
+                if (addr[15] >= '0' && addr[15] <= '9') {
+                    adr = addr[15] - '0';
+                    adr = adr << 4;
+                } else if (addr[15] >= 'A' && addr[15] <= 'F') {
+                    adr = addr[15] - 'A' + 0x0a;
+                    adr = adr << 4;
+                }
+                if (addr[16] >= '0' && addr[16] <= '9') {
+                    adr = adr | (addr[16] - '0');
+                } else if (addr[16] >= 'A' && addr[16] <= 'F') {
+                    adr = adr | (addr[16] - 'A' + 0x0a);
+                }
+            }
+        } else {
+            adr = 0xff;
+        }
+
+        modify = (byte) (modify & 0xEF);
+        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+
+
+        byte opcode = (byte) 0xD0;
+        int address = 0xFFFF;
+
+        TelinkLightService.Instance().sendCommand(opcode, address, params);
+    }
+
+
+    private void btnLightOpenOnclick() {
+        //点击监听
+
+//                int addr = meshAddress;
+        if (meshAddress != 0xff) {
+
+            if (macAddress == null) {
+                apparray = (TelinkLightApplication) getActivity().getApplication();
+                apparray.doInit();
+
+                Mesh mesharray = apparray.getMesh();
+
+                if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
+                    for (int i = 0; i < mesharray.devices.size(); i++) {
+
+                        if (meshAddress == mesharray.devices.get(i).meshAddress) {
+                            macAddress = mesharray.devices.get(i).macAddress;
+                        }
+                    }
+                }
+                char[] addr = macAddress.toCharArray();
+                if (addr[15] >= '0' && addr[15] <= '9') {
+                    adr = addr[15] - '0';
+                    adr = adr << 4;
+                } else if (addr[15] >= 'A' && addr[15] <= 'F') {
+                    adr = addr[15] - 'A' + 0x0a;
+                    adr = adr << 4;
+                }
+                if (addr[16] >= '0' && addr[16] <= '9') {
+                    adr = adr | (addr[16] - '0');
+                } else if (addr[16] >= 'A' && addr[16] <= 'F') {
+                    adr = adr | (addr[16] - 'A' + 0x0a);
+                }
+            }
+        } else {
+            adr = 0xff;
+        }
+
+        modify = (byte) (modify | 0x04);
+        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+
+
+        byte opcode = (byte) 0xD0;
+        int address = 0xFFFF;
+
+        TelinkLightService.Instance().sendCommand(opcode, address, params);
+    }
+
+
+    private void btnLightCloseOnclick() {
+        //点击监听
+
+//                int addr = meshAddress;
+        if (meshAddress != 0xff) {
+
+            if (macAddress == null) {
+                apparray = (TelinkLightApplication) getActivity().getApplication();
+                apparray.doInit();
+
+                Mesh mesharray = apparray.getMesh();
+
+                if (mesharray != null && mesharray.devices != null && mesharray.devices.size() != 0) {
+                    for (int i = 0; i < mesharray.devices.size(); i++) {
+
+                        if (meshAddress == mesharray.devices.get(i).meshAddress) {
+                            macAddress = mesharray.devices.get(i).macAddress;
+                        }
+                    }
+                }
+                char[] addr = macAddress.toCharArray();
+                if (addr[15] >= '0' && addr[15] <= '9') {
+                    adr = addr[15] - '0';
+                    adr = adr << 4;
+                } else if (addr[15] >= 'A' && addr[15] <= 'F') {
+                    adr = addr[15] - 'A' + 0x0a;
+                    adr = adr << 4;
+                }
+                if (addr[16] >= '0' && addr[16] <= '9') {
+                    adr = adr | (addr[16] - '0');
+                } else if (addr[16] >= 'A' && addr[16] <= 'F') {
+                    adr = adr | (addr[16] - 'A' + 0x0a);
+                }
+            }
+        } else {
+            adr = 0xff;
+        }
+
+        modify = (byte) (modify & 0xFB);
+        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+
+
+        byte opcode = (byte) 0xD0;
+        int address = 0xFFFF;
+
+        TelinkLightService.Instance().sendCommand(opcode, address, params);
+    }
+
+
+    static class ItemAdapter extends BaseRecyclerAdapter<SettingAction> {
+
+        public ItemAdapter(Context ctx, List<SettingAction> data) {
+            super(ctx, data);
+        }
+
+        @Override
+        public int getItemLayoutId(int viewType) {
+            return R.layout.item_menu_detail;
+        }
+
+        @Override
+        public void bindData(RecyclerViewHolder holder, int position, SettingAction item) {
+            holder.getTextView(R.id.text).setText(item.getName());
+            if (item.getIconRes() != 0) {
+                holder.getImageView(R.id.img).setImageResource(item.getIconRes());
+            }
         }
     }
 }
