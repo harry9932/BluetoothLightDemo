@@ -58,6 +58,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
     private byte modify = 0;
 
     private int adr;
+    private int adr2;
 
     private SeekBar temperatureBar;
     //    private ColorPicker colorPicker;
@@ -412,6 +413,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                 }
 
                 char[] addr = macAddress.toCharArray();
+                //第一位地址
                 if (addr[15] >= '0' && addr[15] <= '9') {
                     adr = addr[15] - '0';
                     adr = adr << 4;
@@ -424,15 +426,29 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                 } else if (addr[16] >= 'A' && addr[16] <= 'F') {
                     adr = adr | (addr[16] - 'A' + 0x0a);
                 }
+                //第二位地址
+                if (addr[12] >= '0' && addr[12] <= '9') {
+                    adr2 = addr[12] - '0';
+                    adr2 = adr2 << 4;
+                } else if (addr[12] >= 'A' && addr[12] <= 'F') {
+                    adr2 = addr[12] - 'A' + 0x0a;
+                    adr2 = adr2 << 4;
+                }
+                if (addr[13] >= '0' && addr[13] <= '9') {
+                    adr2 = adr2 | (addr[13] - '0');
+                } else if (addr[13] >= 'A' && addr[13] <= 'F') {
+                    adr2 = adr2 | (addr[13] - 'A' + 0x0a);
+                }
             }
         } else {
             adr = 0xff;
+            adr2 = 0xff;
         }
 
 
         modify = (byte) ((modify | 0x02) & 0xFE);
 
-        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+        byte[] params = new byte[]{(byte) adr, (byte)adr2, modify, 0, 0, 0, 0, 0, 0, 0};
 //                    byte[] params = new byte[]{(byte)adr,0,modify,0,0,0,0,0,0,0};
 
         byte opcode = (byte) 0xD0;
@@ -465,6 +481,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                     }
                 }
                 char[] addr = macAddress.toCharArray();
+                //第一位地址
                 if (addr[15] >= '0' && addr[15] <= '9') {
                     adr = addr[15] - '0';
                     adr = adr << 4;
@@ -477,14 +494,28 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                 } else if (addr[16] >= 'A' && addr[16] <= 'F') {
                     adr = adr | (addr[16] - 'A' + 0x0a);
                 }
+                //第二位地址
+                if (addr[12] >= '0' && addr[12] <= '9') {
+                    adr2 = addr[12] - '0';
+                    adr2 = adr2 << 4;
+                } else if (addr[12] >= 'A' && addr[12] <= 'F') {
+                    adr2 = addr[12] - 'A' + 0x0a;
+                    adr2 = adr2 << 4;
+                }
+                if (addr[13] >= '0' && addr[13] <= '9') {
+                    adr2 = adr2 | (addr[13] - '0');
+                } else if (addr[13] >= 'A' && addr[13] <= 'F') {
+                    adr2 = adr2 | (addr[13] - 'A' + 0x0a);
+                }
             }
         } else {
             adr = 0xff;
+            adr2 = 0xff;
         }
 //                int addr = meshAddress;
         modify = (byte) ((modify & 0xFD) & 0xFE);
 
-        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+        byte[] params = new byte[]{(byte) adr, (byte)adr2, modify, 0, 0, 0, 0, 0, 0, 0};
 
 
         byte opcode = (byte) 0xD0;
@@ -515,6 +546,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                     }
                 }
                 char[] addr = macAddress.toCharArray();
+                //第一位地址
                 if (addr[15] >= '0' && addr[15] <= '9') {
                     adr = addr[15] - '0';
                     adr = adr << 4;
@@ -527,13 +559,27 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                 } else if (addr[16] >= 'A' && addr[16] <= 'F') {
                     adr = adr | (addr[16] - 'A' + 0x0a);
                 }
+                //第二位地址
+                if (addr[12] >= '0' && addr[12] <= '9') {
+                    adr2 = addr[12] - '0';
+                    adr2 = adr2 << 4;
+                } else if (addr[12] >= 'A' && addr[12] <= 'F') {
+                    adr2 = addr[12] - 'A' + 0x0a;
+                    adr2 = adr2 << 4;
+                }
+                if (addr[13] >= '0' && addr[13] <= '9') {
+                    adr2 = adr2 | (addr[13] - '0');
+                } else if (addr[13] >= 'A' && addr[13] <= 'F') {
+                    adr2 = adr2 | (addr[13] - 'A' + 0x0a);
+                }
             }
         } else {
             adr = 0xff;
+            adr2 = 0xff;
         }
         modify = (byte) ((modify & 0xFD) | 0x01);
 
-        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+        byte[] params = new byte[]{(byte) adr, (byte)adr2, modify, 0, 0, 0, 0, 0, 0, 0};
 
 
         byte opcode = (byte) 0xD0;
@@ -564,6 +610,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                     }
                 }
                 char[] addr = macAddress.toCharArray();
+                //第一位地址
                 if (addr[15] >= '0' && addr[15] <= '9') {
                     adr = addr[15] - '0';
                     adr = adr << 4;
@@ -576,13 +623,27 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                 } else if (addr[16] >= 'A' && addr[16] <= 'F') {
                     adr = adr | (addr[16] - 'A' + 0x0a);
                 }
+                //第二位地址
+                if (addr[12] >= '0' && addr[12] <= '9') {
+                    adr2 = addr[12] - '0';
+                    adr2 = adr2 << 4;
+                } else if (addr[12] >= 'A' && addr[12] <= 'F') {
+                    adr2 = addr[12] - 'A' + 0x0a;
+                    adr2 = adr2 << 4;
+                }
+                if (addr[13] >= '0' && addr[13] <= '9') {
+                    adr2 = adr2 | (addr[13] - '0');
+                } else if (addr[13] >= 'A' && addr[13] <= 'F') {
+                    adr2 = adr2 | (addr[13] - 'A' + 0x0a);
+                }
             }
         } else {
             adr = 0xff;
+            adr2 = 0xff;
         }
 
         modify = (byte) (modify | 0x08);
-        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+        byte[] params = new byte[]{(byte) adr, (byte)adr2, modify, 0, 0, 0, 0, 0, 0, 0};
 
 
         byte opcode = (byte) 0xD0;
@@ -614,6 +675,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                     }
                 }
                 char[] addr = macAddress.toCharArray();
+                //第一位地址
                 if (addr[15] >= '0' && addr[15] <= '9') {
                     adr = addr[15] - '0';
                     adr = adr << 4;
@@ -626,13 +688,27 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                 } else if (addr[16] >= 'A' && addr[16] <= 'F') {
                     adr = adr | (addr[16] - 'A' + 0x0a);
                 }
+                //第二位地址
+                if (addr[12] >= '0' && addr[12] <= '9') {
+                    adr2 = addr[12] - '0';
+                    adr2 = adr2 << 4;
+                } else if (addr[12] >= 'A' && addr[12] <= 'F') {
+                    adr2 = addr[12] - 'A' + 0x0a;
+                    adr2 = adr2 << 4;
+                }
+                if (addr[13] >= '0' && addr[13] <= '9') {
+                    adr2 = adr2 | (addr[13] - '0');
+                } else if (addr[13] >= 'A' && addr[13] <= 'F') {
+                    adr2 = adr2 | (addr[13] - 'A' + 0x0a);
+                }
             }
         } else {
             adr = 0xff;
+            adr2 = 0xff;
         }
 
         modify = (byte) (modify & 0xF7);
-        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+        byte[] params = new byte[]{(byte) adr, (byte)adr2, modify, 0, 0, 0, 0, 0, 0, 0};
 
 
         byte opcode = (byte) 0xD0;
@@ -662,6 +738,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                     }
                 }
                 char[] addr = macAddress.toCharArray();
+                //第一位地址
                 if (addr[15] >= '0' && addr[15] <= '9') {
                     adr = addr[15] - '0';
                     adr = adr << 4;
@@ -674,13 +751,27 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                 } else if (addr[16] >= 'A' && addr[16] <= 'F') {
                     adr = adr | (addr[16] - 'A' + 0x0a);
                 }
+                //第二位地址
+                if (addr[12] >= '0' && addr[12] <= '9') {
+                    adr2 = addr[12] - '0';
+                    adr2 = adr2 << 4;
+                } else if (addr[12] >= 'A' && addr[12] <= 'F') {
+                    adr2 = addr[12] - 'A' + 0x0a;
+                    adr2 = adr2 << 4;
+                }
+                if (addr[13] >= '0' && addr[13] <= '9') {
+                    adr2 = adr2 | (addr[13] - '0');
+                } else if (addr[13] >= 'A' && addr[13] <= 'F') {
+                    adr2 = adr2 | (addr[13] - 'A' + 0x0a);
+                }
             }
         } else {
             adr = 0xff;
+            adr2 = 0xff;
         }
 
         modify = (byte) (modify | 0x10);
-        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+        byte[] params = new byte[]{(byte) adr, (byte)adr2, modify, 0, 0, 0, 0, 0, 0, 0};
 
 
         byte opcode = (byte) 0xD0;
@@ -710,6 +801,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                     }
                 }
                 char[] addr = macAddress.toCharArray();
+                //第一位地址
                 if (addr[15] >= '0' && addr[15] <= '9') {
                     adr = addr[15] - '0';
                     adr = adr << 4;
@@ -722,13 +814,27 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                 } else if (addr[16] >= 'A' && addr[16] <= 'F') {
                     adr = adr | (addr[16] - 'A' + 0x0a);
                 }
+                //第二位地址
+                if (addr[12] >= '0' && addr[12] <= '9') {
+                    adr2 = addr[12] - '0';
+                    adr2 = adr2 << 4;
+                } else if (addr[12] >= 'A' && addr[12] <= 'F') {
+                    adr2 = addr[12] - 'A' + 0x0a;
+                    adr2 = adr2 << 4;
+                }
+                if (addr[13] >= '0' && addr[13] <= '9') {
+                    adr2 = adr2 | (addr[13] - '0');
+                } else if (addr[13] >= 'A' && addr[13] <= 'F') {
+                    adr2 = adr2 | (addr[13] - 'A' + 0x0a);
+                }
             }
         } else {
             adr = 0xff;
+            adr2 = 0xff;
         }
 
         modify = (byte) (modify & 0xEF);
-        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+        byte[] params = new byte[]{(byte) adr, (byte)adr2, modify, 0, 0, 0, 0, 0, 0, 0};
 
 
         byte opcode = (byte) 0xD0;
@@ -759,6 +865,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                     }
                 }
                 char[] addr = macAddress.toCharArray();
+                //第一位地址
                 if (addr[15] >= '0' && addr[15] <= '9') {
                     adr = addr[15] - '0';
                     adr = adr << 4;
@@ -771,13 +878,27 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                 } else if (addr[16] >= 'A' && addr[16] <= 'F') {
                     adr = adr | (addr[16] - 'A' + 0x0a);
                 }
+                //第二位地址
+                if (addr[12] >= '0' && addr[12] <= '9') {
+                    adr2 = addr[12] - '0';
+                    adr2 = adr2 << 4;
+                } else if (addr[12] >= 'A' && addr[12] <= 'F') {
+                    adr2 = addr[12] - 'A' + 0x0a;
+                    adr2 = adr2 << 4;
+                }
+                if (addr[13] >= '0' && addr[13] <= '9') {
+                    adr2 = adr2 | (addr[13] - '0');
+                } else if (addr[13] >= 'A' && addr[13] <= 'F') {
+                    adr2 = adr2 | (addr[13] - 'A' + 0x0a);
+                }
             }
         } else {
             adr = 0xff;
+            adr2 = 0xff;
         }
 
         modify = (byte) (modify | 0x04);
-        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+        byte[] params = new byte[]{(byte) adr, (byte)adr2, modify, 0, 0, 0, 0, 0, 0, 0};
 
 
         byte opcode = (byte) 0xD0;
@@ -808,6 +929,7 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                     }
                 }
                 char[] addr = macAddress.toCharArray();
+                //第一位地址
                 if (addr[15] >= '0' && addr[15] <= '9') {
                     adr = addr[15] - '0';
                     adr = adr << 4;
@@ -820,13 +942,27 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
                 } else if (addr[16] >= 'A' && addr[16] <= 'F') {
                     adr = adr | (addr[16] - 'A' + 0x0a);
                 }
+                //第二位地址
+                if (addr[12] >= '0' && addr[12] <= '9') {
+                    adr2 = addr[12] - '0';
+                    adr2 = adr2 << 4;
+                } else if (addr[12] >= 'A' && addr[12] <= 'F') {
+                    adr2 = addr[12] - 'A' + 0x0a;
+                    adr2 = adr2 << 4;
+                }
+                if (addr[13] >= '0' && addr[13] <= '9') {
+                    adr2 = adr2 | (addr[13] - '0');
+                } else if (addr[13] >= 'A' && addr[13] <= 'F') {
+                    adr2 = adr2 | (addr[13] - 'A' + 0x0a);
+                }
             }
         } else {
             adr = 0xff;
+            adr2 = 0xff;
         }
 
         modify = (byte) (modify & 0xFB);
-        byte[] params = new byte[]{(byte) adr, 0, modify, 0, 0, 0, 0, 0, 0, 0};
+        byte[] params = new byte[]{(byte) adr, (byte)adr2, modify, 0, 0, 0, 0, 0, 0, 0};
 
 
         byte opcode = (byte) 0xD0;
