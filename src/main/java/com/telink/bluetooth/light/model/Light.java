@@ -21,12 +21,12 @@ public final class Light {
     public int icon = R.drawable.icon_light_on;
 
     public String getLabel() {
-        return Integer.toString(this.meshAddress, 16) + ":" + this.brightness;
+        return Integer.toString(this.meshAddress, 16);
     }
 
-    public String getLabel1() {
-        return this.name + " : " + Integer.toString(this.meshAddress, 16);
-    }
+//    public String getLabel1() {
+//        return this.name + " : " + Integer.toString(this.meshAddress, 16);
+//    }
 
     public String getLabel2() {
         return Integer.toString(this.meshAddress, 16);

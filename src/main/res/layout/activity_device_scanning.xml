@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -34,7 +35,8 @@
             android:text="@string/device_scan_header"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            tools:ignore="RtlCompat" />
     </RelativeLayout>
 
     <FrameLayout
@@ -63,7 +65,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:background="@color/theme_positive_color"
-        android:text="Go Back"
+        android:text="返回"
         android:textColor="@android:color/white"
         android:visibility="visible" />
 

@@ -39,6 +39,10 @@ public class NotificationEvent extends DataEvent<NotificationInfo> {
      */
     public static final String GET_TIME = "com.telink.bluetooth.light.EVENT_GET_TIME";
 
+    //用户所有数据
+
+    public static final String GET_USER_ALL_DATA  = "com.telink.bluetooth.light.EVENT_USER_ALL_DATA ";
+
     private static final Map<Byte, String> EVENT_MAPPING = new HashMap<>();
 
     static {
@@ -47,6 +51,8 @@ public class NotificationEvent extends DataEvent<NotificationInfo> {
         register(Opcode.BLE_GATT_OP_CTRL_E7, GET_ALARM);
         register(Opcode.BLE_GATT_OP_CTRL_E9, GET_TIME);
         register(Opcode.BLE_GATT_OP_CTRL_C1, GET_SCENE);
+        register(Opcode.BLE_GATT_OP_CTRL_EA, GET_USER_ALL_DATA);
+
     }
 
     /**

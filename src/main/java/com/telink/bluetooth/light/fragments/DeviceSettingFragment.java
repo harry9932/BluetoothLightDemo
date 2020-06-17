@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -245,7 +246,14 @@ public final class DeviceSettingFragment extends Fragment implements View.OnClic
 
         mItemAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View itemView, int pos) {
+            public void onItemClick(final View itemView, int pos) {
+                itemView.setBackground(getActivity().getResources().getDrawable(R.color.transparent_black));
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        itemView.setBackground(getActivity().getResources().getDrawable(R.drawable.menu_foreground_gray_transparent));
+                    }
+                },100);
                 String name = mItemAdapter.getItem(pos).getName();
                 if (name.equals((getString(R.string.action_up)))) {
                     btnUpOnclick();

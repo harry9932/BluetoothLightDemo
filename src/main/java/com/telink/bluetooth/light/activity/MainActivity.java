@@ -50,6 +50,8 @@ import com.telink.util.BuildUtils;
 import com.telink.util.Event;
 import com.telink.util.EventListener;
 
+import com.telink.bluetooth.light.NotificationInfo;
+
 import java.util.List;
 
 
@@ -90,6 +92,15 @@ public final class MainActivity extends TelinkFragmentActivity implements EventL
             super.handleMessage(msg);
             switch (msg.what) {
                 case UPDATE_LIST:
+                    NotificationInfo info = (NotificationInfo) msg.obj;
+//                    // RecvText.setText(RecvText.getText(), TextView.BufferType.EDITABLE);
+//                    //RecvText.setText(Arrays.bytesToHexString(info.params, ", "));
+//                    RecvText.append(Arrays.bytesToHexString(info.params, ", ")+"\n");
+//                    // RecvText.setText(Arrays.bytesToHexString(info.params),"," );
+//                    if(RecvText.getLineCount() >15)
+//                    {
+//                        RecvText.setText("");
+//                    }
                     deviceFragment.notifyDataSetChanged();
                     break;
             }
@@ -120,6 +131,15 @@ public final class MainActivity extends TelinkFragmentActivity implements EventL
             }
         }
     };
+
+    private void userAllNotify(NotificationEvent event) {
+        Message message;
+
+        message = mHandler.obtainMessage();//性能优化后
+        message.what=UPDATE_LIST;
+        message.obj = event.getArgs();
+        mHandler.sendMessage(message); //发送消息
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +213,7 @@ public final class MainActivity extends TelinkFragmentActivity implements EventL
         this.mApplication.addEventListener(ServiceEvent.SERVICE_CONNECTED, this);
         this.mApplication.addEventListener(MeshEvent.OFFLINE, this);
         this.mApplication.addEventListener(MeshEvent.ERROR, this);
+        this.mApplication.addEventListener(NotificationEvent.GET_USER_ALL_DATA, this);
 
         this.autoConnect();
 
@@ -215,7 +236,7 @@ public final class MainActivity extends TelinkFragmentActivity implements EventL
         super.onResume();
         //检查是否支持蓝牙设备
         if (!LeBluetooth.getInstance().isSupport(getApplicationContext())) {
-            Toast.makeText(this, "ble not support", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "蓝牙不支持", Toast.LENGTH_SHORT).show();
             this.finish();
             return;
         }
@@ -223,13 +244,13 @@ public final class MainActivity extends TelinkFragmentActivity implements EventL
         if (!LeBluetooth.getInstance().isEnabled()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("开启蓝牙，体验智能灯!");
-            builder.setNeutralButton("cancel", new DialogInterface.OnClickListener() {
+            builder.setNeutralButton("取消", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     finish();
                 }
             });
-            builder.setNegativeButton("enable", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("开启", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     LeBluetooth.getInstance().enable(getApplicationContext());
@@ -329,7 +350,7 @@ public final class MainActivity extends TelinkFragmentActivity implements EventL
         switch (deviceInfo.status) {
             case LightAdapter.STATUS_LOGIN:
                 this.connectMeshAddress = this.mApplication.getConnectDevice().meshAddress;
-                this.show("login success");
+                this.show("登录成功");
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -338,10 +359,10 @@ public final class MainActivity extends TelinkFragmentActivity implements EventL
                 }, 3 * 1000);
                 break;
             case LightAdapter.STATUS_CONNECTING:
-                this.show("login");
+                this.show("登录");
                 break;
             case LightAdapter.STATUS_LOGOUT:
-                this.show("disconnect");
+                this.show("设备掉线");
                 break;
             default:
                 break;
@@ -459,6 +480,9 @@ public final class MainActivity extends TelinkFragmentActivity implements EventL
                 break;
             case ServiceEvent.SERVICE_DISCONNECTED:
                 this.onServiceDisconnected((ServiceEvent) event);
+                break;
+            case NotificationEvent.GET_USER_ALL_DATA:
+                this.userAllNotify((NotificationEvent) event);
                 break;
         }
     }

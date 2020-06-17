@@ -35,7 +35,8 @@
             android:text="@string/device_setting_header"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            tools:ignore="RtlCompat" />
 
     </RelativeLayout>
 

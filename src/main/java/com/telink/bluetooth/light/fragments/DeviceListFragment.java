@@ -163,36 +163,36 @@ public final class DeviceListFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
 
-            Light light = adapter.getItem(position);
-
-            if (light.status == ConnectionStatus.OFFLINE)
-                return;
-
-            int dstAddr = light.meshAddress;
-
-            Log.d(TAG, " on off " + dstAddr);
-
-            byte opcode = (byte) 0xD0;
-
-            if (light.status == ConnectionStatus.OFF) {
-
-                if (TelinkLightService.Instance().sendCommandNoResponse(opcode, dstAddr,
-                        new byte[]{0x01, 0x00, 0x00})) {
-                    light.status = ConnectionStatus.ON;
-                    light.icon = R.drawable.icon_light_on;
-                    notifyDataSetChanged();
-                }
-            } else if (light.status == ConnectionStatus.ON) {
-
-                if (TelinkLightService.Instance().sendCommandNoResponse(opcode, dstAddr,
-                        new byte[]{0x00, 0x00, 0x00})) {
-                    light.status = ConnectionStatus.OFF;
-                    light.icon = R.drawable.icon_light_off;
-                    notifyDataSetChanged();
-                }
-//                TelinkLightService.Instance().sendCommandNoResponse(opcode, dstAddr,
-//                        new byte[]{0x04, -1, -1,-1});
-            }
+//            Light light = adapter.getItem(position);
+//
+//            if (light.status == ConnectionStatus.OFFLINE)
+//                return;
+//
+//            int dstAddr = light.meshAddress;
+//
+//            Log.d(TAG, " on off " + dstAddr);
+//
+//            byte opcode = (byte) 0xD0;
+//
+//            if (light.status == ConnectionStatus.OFF) {
+//
+//                if (TelinkLightService.Instance().sendCommandNoResponse(opcode, dstAddr,
+//                        new byte[]{0x01, 0x00, 0x00})) {
+//                    light.status = ConnectionStatus.ON;
+//                    light.icon = R.drawable.icon_light_on;
+//                    notifyDataSetChanged();
+//                }
+//            } else if (light.status == ConnectionStatus.ON) {
+//
+//                if (TelinkLightService.Instance().sendCommandNoResponse(opcode, dstAddr,
+//                        new byte[]{0x00, 0x00, 0x00})) {
+//                    light.status = ConnectionStatus.OFF;
+//                    light.icon = R.drawable.icon_light_off;
+//                    notifyDataSetChanged();
+//                }
+////                TelinkLightService.Instance().sendCommandNoResponse(opcode, dstAddr,
+////                        new byte[]{0x04, -1, -1,-1});
+//            }
         }
     };
 

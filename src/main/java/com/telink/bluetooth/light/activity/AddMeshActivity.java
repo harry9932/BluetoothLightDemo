@@ -62,7 +62,7 @@ public final class AddMeshActivity extends TelinkActivity {
             @Override
             public void onClick(View view) {
 
-                new AlertDialog.Builder(AddMeshActivity.this).setTitle("是否删除旧数据")
+                new AlertDialog.Builder(AddMeshActivity.this).setTitle("是否删除旧数据(初始化)")
                         .setPositiveButton("删除", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
